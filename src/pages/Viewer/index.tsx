@@ -1,5 +1,5 @@
-import GuildIcon from "../../components/GuildIcon"
-import TestImage from "../../assets/test.png"
+import TestImage from "@/assets/test.png"
+import GuildIcon from "@/components/GuildIcon";
 
 export default function Viewer() {
     return (
