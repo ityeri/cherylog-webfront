@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+    --color-background-primary: #191919;
+    --color-background-secondary: #212121;
+}
+
+@layer base {
+    html, body {
+        background-color: var(--color-background-primary);
+    }
+}
