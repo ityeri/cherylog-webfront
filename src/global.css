@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 @theme {
+    --color-text-primary: #FFFFFF;
+    --color-text-secondary: #AEAEAE;
+    --color-text-disabled: #737373;
+
     --color-background-primary: #191919;
     --color-background-secondary: #212121;
 }
@@ -8,5 +12,6 @@
 @layer base {
     html, body {
         background-color: var(--color-background-primary);
+        color: var(--color-text-primary);
     }
 }
