@@ -18,11 +18,11 @@ function ViewerPage() {
             className="
             relative
             grid grid-cols-[200px_1fr] grid-rows-[0px]
-            gap-y-2
+            gap-x-0.5
             overflow-x-scroll overflow-y-hidden
             "
         >
-            <div className="grid grid-cols-subgrid col-span-2 gap-y-1 h-[1000vh]">
+            <div className="grid grid-cols-subgrid col-span-2">
                 <div
                     className="
                     sticky left-0
@@ -30,12 +30,13 @@ function ViewerPage() {
                     bg-background-primary
                     "
                 >
-                    <div className="w-0 h-full">
-                        <div className="h-full w-px bg-text-disabled"/>
+                    <div className="w-0 h-[100vh]">
+                        <div className="w-0.5 h-full bg-text-disabled"/>
                     </div>
                 </div>
                 <div/>
             </div>
+            <VoiceUserTrack name="minko" profileImage={TestImage} opened={opened} onDoubleClick={handleDoubleClick}/>
             <VoiceUserTrack name="minko" profileImage={TestImage} opened={opened} onDoubleClick={handleDoubleClick}/>
             <VoiceUserTrack name="minko" profileImage={TestImage} opened={opened} onDoubleClick={handleDoubleClick}/>
         </div>
