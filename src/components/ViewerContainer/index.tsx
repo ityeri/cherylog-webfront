@@ -1,11 +1,9 @@
-import VoiceUserTrack from "@/components/VoiceUserTrack";
 import TestImage from "@/assets/test.png";
+import * as React from "react";
 import {useState} from "react";
 import {type ReactZoomPanPinchRef, TransformComponent, TransformWrapper} from "react-zoom-pan-pinch";
-import VoiceChannelTrack from "@/components/VoiceChannelTrack";
-import {testData} from "@/textData.ts";
+import {testData} from "@/testData.ts";
 import VoiceGuildTrack from "@/components/VoiceGuildTrack";
-import * as React from "react";
 
 export default function ViewerContainer() {
     const [viewport, setViewport] = useState({
@@ -15,9 +13,9 @@ export default function ViewerContainer() {
     })
 
     type TransformHandler = (ref: ReactZoomPanPinchRef, state: {
-        scale: number;
-        positionX: number;
-        positionY: number;
+        scale: number
+        positionX: number
+        positionY: number
     }) => void
 
     const handleTransform: TransformHandler = (
@@ -39,8 +37,6 @@ export default function ViewerContainer() {
         gap-y-5
         "
     >
-
-
         <div className="grid grid-cols-subgrid col-span-2">
             <VoiceGuildTrack
                 name="밍코와 친구들"
