@@ -9,8 +9,8 @@ type VoiceChannelParms = {
 export default function VoiceChannel({name, enabled}: VoiceChannelParms) {
     return <div
         className="
-        size-full flex items-center gap-2.5 p-1.5
-        hover:bg-background-secondary rounded-md"
+        size-full flex items-center gap-2.5
+        "
     >
         <img src={enabled ? EnabledIcon : DisabledIcon} alt="TODO" className="h-full aspect-square"/>
         <p className={enabled ? "text-text-primary" : "text-text-disabled"}>{name}</p>

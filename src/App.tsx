@@ -1,5 +1,5 @@
 import {BrowserRouter, Route, Routes} from "react-router";
-import ViewerPage from "./pages/Viewer";
+import ViewerPage from "./pages/ViewerPage";
 
 function App() {
     return (

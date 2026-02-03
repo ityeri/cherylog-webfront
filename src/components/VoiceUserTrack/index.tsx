@@ -1,45 +1,112 @@
 import VoiceUser from "@/components/VoiceUser";
-import VoiceStateTrack from "@/components/VoiceStateTrack";
+import type {Viewport} from "@/Viewport.ts";
 
-import DeafIcon from "@/assets/voice-state-icon/deaf.svg"
-import MuteIcon from "@/assets/voice-state-icon/mute.svg"
-import SelfDeafIcon from "@/assets/voice-state-icon/self-deaf.svg"
-import SelfMuteIcon from "@/assets/voice-state-icon/self-mute.svg"
-import * as React from "react";
+type TrackElementData = {
+    at: number
+    duration: number
+}
+
+type UserTrackData = {
+    disconnection: TrackElementData[]
+    deaf: TrackElementData[]
+    mute: TrackElementData[]
+    selfDeaf: TrackElementData[]
+    selfMute: TrackElementData[]
+}
 
 type VoiceUserTrackParms = {
     name: string
     profileImage: string
-    opened: boolean
-    onDoubleClick: (event: React.MouseEvent) => void
+
+    viewport: Viewport
+    data: UserTrackData
 }
 
-export default function VoiceUserTrack({name, profileImage, opened, onDoubleClick}: VoiceUserTrackParms) {
-    return <div className="grid grid-cols-subgrid col-span-2 gap-y-1">
-        <div className="grid grid-cols-subgrid col-span-2 h-7">
-            <div className="track-info sticky left-0 h-full overflow-hidden select-none" onDoubleClick={onDoubleClick}>
-                {/* VoiceUser is flex so, overflow-hidden is needed */}
-                <VoiceUser
-                    name={name} profileImage={profileImage} enabled={false}
-                    deaf={false} mute={true} selfDeaf={false} selfMute={false}
-                />
-            </div>
-            <div className="h-full">
-                <div className={"size-full rounded-sm bg-amber-400"}></div>
-            </div>
+export default function VoiceUserTrack({name, profileImage, viewport, data}: VoiceUserTrackParms) {
+    return <div
+        className="
+        grid grid-cols-subgrid col-span-2
+        py-1 rounded-md
+        overflow-hidden
+        hover:bg-background-hover
+        transition-colors
+        duration-200
+        "
+    >
+        {/* VoiceUser is flex so, overflow-hidden is needed */}
+        <div className="overflow-hidden p-px px-2">
+            <VoiceUser
+                name={name} profileImage={profileImage} enabled={false}
+                deaf={true} mute={false} selfDeaf={true} selfMute={false}
+            />
         </div>
+        <div>
+            <div className="relative size-full">
+                <div className=" size-full flex flex-col gap-1 overflow-clip">
+                    <div className="flex-1 relative">
+                        {
+                            data.selfDeaf.map(value => {
+                                return <div
+                                    className="absolute inset-y-0 bg-text-disabled rounded-full"
+                                    style={{
+                                        left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
+                                        width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                    }}
+                                />
+                            })
+                        }
+                        {
+                            data.deaf.map(value => {
+                                return <div
+                                    className="absolute inset-y-0 bg-red-500 rounded-full"
+                                    style={{
+                                        left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
+                                        width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                    }}
+                                />
+                            })
+                        }
+                    </div>
+                    <div className="flex-1 relative">
+                        {
+                            data.selfMute.map(value => {
+                                return <div
+                                    className="absolute inset-y-0 bg-text-disabled rounded-full"
+                                    style={{
+                                        left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
+                                        width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                    }}
+                                />
+                            })
+                        }
+                        {
+                            data.mute.map(value => {
+                                return <div
+                                    className="absolute inset-y-0 bg-red-500 rounded-full"
+                                    style={{
+                                        left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
+                                        width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                    }}
+                                />
+                            })
+                        }
+                    </div>
+                </div>
 
-        <div
-            className={`
-            grid grid-cols-subgrid col-span-2 grid-rows-4
-            ${opened ? "h-24 gap-y-0.5" : "h-0 invisible"}
-            transition-all duration-200 ease-out
-            `}
-        >
-            <VoiceStateTrack icon={DeafIcon} alt="TODO"/>
-            <VoiceStateTrack icon={MuteIcon} alt="TODO"/>
-            <VoiceStateTrack icon={SelfDeafIcon} alt="TODO"/>
-            <VoiceStateTrack icon={SelfMuteIcon} alt="TODO"/>
+                <div className="absolute size-full left-0 top-0 overflow-clip">
+                    {
+                        data.disconnection.map(value => {
+                            return <div
+                                className="absolute inset-y-0 bg-black opacity-50"
+                                style={{
+                                    left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
+                                    width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                }}
+                            />
+                        })
+                    }
+                </div>
+            </div>
         </div>
     </div>
 }
