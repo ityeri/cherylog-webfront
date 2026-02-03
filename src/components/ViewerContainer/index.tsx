@@ -2,6 +2,10 @@ import VoiceUserTrack from "@/components/VoiceUserTrack";
 import TestImage from "@/assets/test.png";
 import {useState} from "react";
 import {type ReactZoomPanPinchRef, TransformComponent, TransformWrapper} from "react-zoom-pan-pinch";
+import VoiceChannelTrack from "@/components/VoiceChannelTrack";
+import {testData} from "@/textData.ts";
+import VoiceGuildTrack from "@/components/VoiceGuildTrack";
+import * as React from "react";
 
 export default function ViewerContainer() {
     const [viewport, setViewport] = useState({
@@ -29,22 +33,22 @@ export default function ViewerContainer() {
     return <div
         className="
         relative
-        size-full
+        w-full
+        h-auto
         grid grid-cols-[200px_1fr]
         gap-y-5
         "
     >
-        <div className="grid grid-cols-subgrid col-span-2 h-7">
-            <VoiceUserTrack
-                name="minko" profileImage={TestImage}
+
+
+        <div className="grid grid-cols-subgrid col-span-2">
+            <VoiceGuildTrack
+                name="밍코와 친구들"
+                guildIcon={TestImage}
+                opened={true}
+                onDoubleClick={() => {}}
                 viewport={viewport}
-                data={{
-                    disconnection: [{at: 1.1, duration: 0.5}],
-                    deaf: [{at: 1, duration: 1}],
-                    mute: [{at: 2, duration: 1}],
-                    selfDeaf: [{at: 0, duration: 3}],
-                    selfMute: []
-                }}
+                channels={testData}
             />
         </div>
 
@@ -59,8 +63,8 @@ export default function ViewerContainer() {
                     <div className="w-px h-full bg-text-disabled"/>
                 </div>
             </div>
-            <div>
-                <div className="absolute bottom-0 w-full h-full">
+            <div style={{ '--viewport-width': '100%' } as React.CSSProperties}>
+                <div className="absolute bottom-0 w-(--viewport-width) h-full">
                     <TransformWrapper
                         minScale={0.01}
                         limitToBounds={false}

@@ -1,17 +1,27 @@
 import VoiceChannel from "@/components/VoiceChannel";
-import VoiceUserTrack from "@/components/VoiceUserTrack";
+import VoiceUserTrack, {type VoiceUserTrackData} from "@/components/VoiceUserTrack";
 
-import TestImage from "@/assets/test.png"
 import * as React from "react";
+import type {Viewport} from "@/Viewport.ts";
+
+export type VoiceUserData = {
+    name: string
+    profileImage: string
+    trackData: VoiceUserTrackData
+}
 
 type VoiceChannelTrackParms = {
     name: string
     enabled: boolean
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
+    viewport: Viewport
+    users: VoiceUserData[]
 }
 
-export default function VoiceChannelTrack({name, enabled, opened, onDoubleClick}: VoiceChannelTrackParms) {
+export default function VoiceChannelTrack(
+    {name, enabled, opened, onDoubleClick, viewport, users}: VoiceChannelTrackParms
+) {
     const childWrapperClass = `
     grid grid-cols-subgrid col-span-2 
     ${opened ? "h-7" : "h-0 opacity-0 invisible"} 
@@ -33,7 +43,7 @@ export default function VoiceChannelTrack({name, enabled, opened, onDoubleClick}
                 <VoiceChannel name={name} enabled={enabled}/>
             </div>
             <div>
-                {/* ?? */}
+                {/* nottodo */}
             </div>
         </div>
         <div
@@ -41,18 +51,18 @@ export default function VoiceChannelTrack({name, enabled, opened, onDoubleClick}
             grid grid-cols-subgrid col-span-2 pl-2
             `}
         >
-            <div className={childWrapperClass}>
-                <VoiceUserTrack name="minko" profileImage={TestImage}/>
-            </div>
-            <div className={childWrapperClass}>
-                <VoiceUserTrack name="minko" profileImage={TestImage}/>
-            </div>
-            <div className={childWrapperClass}>
-                <VoiceUserTrack name="minko" profileImage={TestImage}/>
-            </div>
-            <div className={childWrapperClass}>
-                <VoiceUserTrack name="minko" profileImage={TestImage}/>
-            </div>
+            {
+                users.map((userData) => {
+                    return <div className={childWrapperClass}>
+                        <VoiceUserTrack
+                            name={userData.name}
+                            profileImage={userData.profileImage}
+                            viewport={viewport}
+                            data={userData.trackData}
+                        />
+                    </div>
+                })
+            }
         </div>
     </div>
 

@@ -1,25 +1,25 @@
-import VoiceChannelTrack from "@/components/VoiceChannelTrack";
+import VoiceChannelTrack, {type VoiceUserData} from "@/components/VoiceChannelTrack";
 import GuildIcon from "@/components/GuildIcon";
-import { motion } from "framer-motion";
-import {useState} from "react";
+import {motion} from "framer-motion";
 import * as React from "react";
-import VoiceUserTrack from "@/components/VoiceUserTrack";
-import TestImage from "@/assets/test.png";
+import type {Viewport} from "@/Viewport.ts";
+
+export type VoiceChannelData = {
+    name: string
+    enabled: boolean
+    users: VoiceUserData[]
+}
 
 type VoiceGuildParms = {
     name: string
     guildIcon: string
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
+    viewport: Viewport
+    channels: VoiceChannelData[]
 }
 
-export default function VoiceGuildTrack({name, guildIcon, opened, onDoubleClick}: VoiceGuildParms) {
-    const [childOpened, setChildOpen] = useState(false)
-
-    const handleDoubleClick = (event: React.MouseEvent) => {
-        setChildOpen(!childOpened)
-    }
-
+export default function VoiceGuildTrack({name, guildIcon, opened, onDoubleClick, viewport, channels}: VoiceGuildParms) {
     return <div className="grid grid-cols-subgrid col-span-2 gap-y-1">
         <div
             className="
@@ -52,8 +52,18 @@ export default function VoiceGuildTrack({name, guildIcon, opened, onDoubleClick}
             }
             transition={{duration: 0.2, ease: "easeOut"}}
         >
-            <VoiceChannelTrack name="allen.sh" enabled={true} opened={childOpened} onDoubleClick={handleDoubleClick}/>
-            <VoiceChannelTrack name="allen.sh" enabled={true} opened={childOpened} onDoubleClick={handleDoubleClick}/>
+            {
+                channels.map((voiceChannelData) => {
+                    return <VoiceChannelTrack
+                        name={voiceChannelData.name}
+                        enabled={voiceChannelData.enabled}
+                        opened={true}
+                        onDoubleClick={() => {}}
+                        viewport={viewport}
+                        users={voiceChannelData.users}
+                    />
+                })
+            }
         </motion.div>
     </div>
 }

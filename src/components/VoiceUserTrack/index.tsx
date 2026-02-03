@@ -6,7 +6,7 @@ type TrackElementData = {
     duration: number
 }
 
-type UserTrackData = {
+export type VoiceUserTrackData = {
     disconnection: TrackElementData[]
     deaf: TrackElementData[]
     mute: TrackElementData[]
@@ -19,7 +19,7 @@ type VoiceUserTrackParms = {
     profileImage: string
 
     viewport: Viewport
-    data: UserTrackData
+    data: VoiceUserTrackData
 }
 
 export default function VoiceUserTrack({name, profileImage, viewport, data}: VoiceUserTrackParms) {
@@ -45,7 +45,7 @@ export default function VoiceUserTrack({name, profileImage, viewport, data}: Voi
                 <div className=" size-full flex flex-col gap-1 overflow-clip">
                     <div className="flex-1 relative">
                         {
-                            data.selfDeaf.map(value => {
+                            data.selfDeaf.map(value => { // TODO value -> any other name?
                                 return <div
                                     className="absolute inset-y-0 bg-text-disabled rounded-full"
                                     style={{
