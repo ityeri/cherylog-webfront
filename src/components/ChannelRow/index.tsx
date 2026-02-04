@@ -1,26 +1,22 @@
-import VoiceChannel from "@/components/VoiceChannel";
-import VoiceUserTrack, {type VoiceUserTrackData} from "@/components/VoiceUserTrack";
+import UserRow from "@/components/UserRow";
 
 import * as React from "react";
 import type {Viewport} from "@/Viewport.ts";
+import EnabledIcon from "@/assets/voice-channel-enabled.svg";
+import DisabledIcon from "@/assets/voice-channel-disabled.svg";
+import type {UserData} from "@/types.ts";
 
-export type VoiceUserData = {
-    name: string
-    profileImage: string
-    trackData: VoiceUserTrackData
-}
-
-type VoiceChannelTrackParms = {
+type ChannelRowParms = {
     name: string
     enabled: boolean
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
     viewport: Viewport
-    users: VoiceUserData[]
+    users: Record<number, UserData>
 }
 
-export default function VoiceChannelTrack(
-    {name, enabled, opened, onDoubleClick, viewport, users}: VoiceChannelTrackParms
+export default function ChannelRow(
+    {name, enabled, opened, onDoubleClick, viewport, users}: ChannelRowParms
 ) {
     const childWrapperClass = `
     grid grid-cols-subgrid col-span-2 
@@ -40,7 +36,10 @@ export default function VoiceChannelTrack(
         >
             {/* VoiceUser is flex so, overflow-hidden is needed */}
             <div className="overflow-hidden">
-                <VoiceChannel name={name} enabled={enabled}/>
+                <div className=" size-full flex items-center gap-2.5">
+                    <img src={enabled ? EnabledIcon : DisabledIcon} alt="TODO" className="h-full aspect-square"/>
+                    <p className={enabled ? "text-text-primary" : "text-text-disabled"}>{name}</p>
+                </div>
             </div>
             <div>
                 {/* nottodo */}
@@ -52,13 +51,20 @@ export default function VoiceChannelTrack(
             `}
         >
             {
-                users.map((userData) => {
+                Object.values(users).map((userData) => {
                     return <div className={childWrapperClass}>
-                        <VoiceUserTrack
+                        <UserRow
                             name={userData.name}
                             profileImage={userData.profileImage}
+                            enabled={userData.enabled}
+
+                            deaf={userData.deaf}
+                            mute={userData.mute}
+                            selfDeaf={userData.selfDeaf}
+                            selfMute={userData.selfMute}
+
                             viewport={viewport}
-                            data={userData.trackData}
+                            voiceStateData={userData.voiceStateData}
                         />
                     </div>
                 })

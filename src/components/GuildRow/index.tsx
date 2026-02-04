@@ -1,25 +1,29 @@
-import VoiceChannelTrack, {type VoiceUserData} from "@/components/VoiceChannelTrack";
+import ChannelRow from "@/components/ChannelRow";
 import GuildIcon from "@/components/GuildIcon";
 import {motion} from "framer-motion";
 import * as React from "react";
+import {useState} from "react";
 import type {Viewport} from "@/Viewport.ts";
+import type {ChannelData} from "@/types.ts";
 
-export type VoiceChannelData = {
-    name: string
-    enabled: boolean
-    users: VoiceUserData[]
-}
-
-type VoiceGuildParms = {
+type GuildRowParms = {
     name: string
     guildIcon: string
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
     viewport: Viewport
-    channels: VoiceChannelData[]
+    channels: Record<string, ChannelData>
 }
 
-export default function VoiceGuildTrack({name, guildIcon, opened, onDoubleClick, viewport, channels}: VoiceGuildParms) {
+export default function GuildRow({name, guildIcon, opened, onDoubleClick, viewport, channels}: GuildRowParms) {
+    const [channelStates, setChannelStates] = useState(
+        Object.fromEntries(Object.keys(channels).map(c => [c, true]))
+    )
+
+    const handleDoubleClick = (channelId: string) => {
+        setChannelStates(statesOld => Object.assign({}, statesOld, {[channelId]: !statesOld[channelId]}))
+    }
+
     return <div className="grid grid-cols-subgrid col-span-2 gap-y-1">
         <div
             className="
@@ -53,15 +57,18 @@ export default function VoiceGuildTrack({name, guildIcon, opened, onDoubleClick,
             transition={{duration: 0.2, ease: "easeOut"}}
         >
             {
-                channels.map((voiceChannelData) => {
-                    return <VoiceChannelTrack
-                        name={voiceChannelData.name}
-                        enabled={voiceChannelData.enabled}
-                        opened={true}
-                        onDoubleClick={() => {}}
-                        viewport={viewport}
-                        users={voiceChannelData.users}
-                    />
+                Object.keys(channels)
+                    .map((channelId) => {
+                        const channelData = channels[channelId]
+
+                        return <ChannelRow
+                            name={channelData.name}
+                            enabled={channelData.enabled}
+                            opened={channelStates[channelId]}
+                            onDoubleClick={() => handleDoubleClick(channelId)}
+                            viewport={viewport}
+                            users={channelData.users}
+                        />
                 })
             }
         </motion.div>

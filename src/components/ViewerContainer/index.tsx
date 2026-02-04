@@ -1,11 +1,14 @@
-import TestImage from "@/assets/test.png";
 import * as React from "react";
 import {useState} from "react";
 import {type ReactZoomPanPinchRef, TransformComponent, TransformWrapper} from "react-zoom-pan-pinch";
-import {testData} from "@/testData.ts";
-import VoiceGuildTrack from "@/components/VoiceGuildTrack";
+import GuildRow from "@/components/GuildRow";
+import type {ChartData} from "@/types.ts";
 
-export default function ViewerContainer() {
+type ViewerContainerParms = {
+    chartData: ChartData
+}
+
+export default function ViewerContainer({chartData}: ViewerContainerParms) {
     const [viewport, setViewport] = useState({
         xShiftPx: 0,
         zoom: 1.0,
@@ -28,6 +31,28 @@ export default function ViewerContainer() {
         })
     }
 
+    const [guildStates, setGuildStates] = useState(
+        (Object.keys(chartData) as unknown as number[])
+            .map(
+                (guildId) => [guildId, true]
+            ) as unknown as Record<number, boolean>
+    )
+
+    const handleDoubleClick = (guildId :number) => {
+        setGuildStates(
+            Object.fromEntries(
+                (Object.keys(chartData) as unknown as number[])
+                    .map((checkingGuildId) => {
+                        if (checkingGuildId == guildId) {
+                            return [checkingGuildId, !guildStates[checkingGuildId]]
+                        } else {
+                            return [checkingGuildId, guildStates[checkingGuildId]]
+                        }
+                    })
+            )
+        )
+    }
+
     return <div
         className="
         relative
@@ -38,14 +63,21 @@ export default function ViewerContainer() {
         "
     >
         <div className="grid grid-cols-subgrid col-span-2">
-            <VoiceGuildTrack
-                name="밍코와 친구들"
-                guildIcon={TestImage}
-                opened={true}
-                onDoubleClick={() => {}}
-                viewport={viewport}
-                channels={testData}
-            />
+            {
+                (Object.keys(chartData) as unknown as number[])
+                    .map((guildId) => {
+                        const guildData = chartData[guildId]
+
+                        return <GuildRow
+                            name={guildData.name}
+                            guildIcon={guildData.icon}
+                            opened={guildStates[guildId]}
+                            onDoubleClick={() => handleDoubleClick(guildId)}
+                            viewport={viewport}
+                            channels={guildData.channels}
+                        />
+                    })
+            }
         </div>
 
         <div className="h-0 grid grid-cols-subgrid col-span-2">
