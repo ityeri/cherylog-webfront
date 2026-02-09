@@ -41,7 +41,7 @@ export default function ViewerContainer({chartData}: ViewerContainerParms) { // 
 
     useLayoutEffect(() => {
         const observer = new ResizeObserver(([entry]) => {
-            if (entry.contentRect.width != chartViewportWidth) {
+            if (entry.contentRect.width !== chartViewportWidth) {
                 setChartViewportWidth(entry.contentRect.width)
                 setViewport(prevViewport => ({
                     ...prevViewport,
@@ -57,53 +57,81 @@ export default function ViewerContainer({chartData}: ViewerContainerParms) { // 
     const mousePushRef = useRef(false)
     const lastMousePositionRef = useRef({x: 0, y: 0})
 
-    useEffect(() => {
-        const handleUp = () => {
-            mousePushRef.current = false
-        }
+    const handleUp = () => {
+        mousePushRef.current = false
+    }
 
-        const handleMouseMove = (e: MouseEvent) => {
-            e.preventDefault()
-            if (mousePushRef.current) {
-                const lastMousePosition = lastMousePositionRef.current
-                const mouseDelta = {
-                    x: e.clientX - lastMousePosition.x,
-                    y: e.clientY - lastMousePosition.y
-                }
-
-                const deltaXTime = unprojectScale(mouseDelta.x)
-
-                setViewport(prevViewport => ({
-                    ...prevViewport,
-                    camera: {
-                        ...prevViewport.camera,
-                        at: prevViewport.camera.at - deltaXTime
-                    }
-                }))
+    const handleMouseMove = (e: MouseEvent) => {
+        e.preventDefault()
+        if (mousePushRef.current) {
+            const lastMousePosition = lastMousePositionRef.current
+            const mouseDelta = {
+                x: e.clientX - lastMousePosition.x,
+                y: e.clientY - lastMousePosition.y
             }
 
-            lastMousePositionRef.current = {x: e.clientX, y: e.clientY}
+            const deltaXTime = unprojectScale(mouseDelta.x)
+
+            setViewport(prevViewport => ({
+                ...prevViewport,
+                camera: {
+                    ...prevViewport.camera,
+                    at: prevViewport.camera.at - deltaXTime
+                }
+            }))
         }
 
+        lastMousePositionRef.current = {x: e.clientX, y: e.clientY}
+    }
+
+    const handleWheel = (e: WheelEvent) => {
+        e.preventDefault()
+        setGoalZoom(prevZoom => prevZoom * (1.002 ** -e.deltaY))
+    }
+
+    useEffect(() => {
         window.addEventListener("mouseup", handleUp)
         window.addEventListener("mousemove", handleMouseMove)
+        chartSpaceRef.current!.addEventListener("wheel", handleWheel, {passive: false})
 
         return () => {
             window.removeEventListener("mouseup", handleUp)
             window.removeEventListener("mousemove", handleMouseMove)
+            if (chartSpaceRef.current !== null) {
+                chartSpaceRef.current!.removeEventListener("wheel", handleWheel)
+            }
         }
     })
 
-    const handleWheel = (e: React.WheelEvent) => {
-        e.preventDefault()
+
+    const zoomAnimationRequestRef = useRef<number>();
+
+    const zoomAnimation = (time: number) => {
         setViewport(prevViewport => ({
             ...prevViewport,
             camera: {
                 ...prevViewport.camera,
-                zoom: prevViewport.camera.zoom * (1.004 ** -e.deltaY)
+                zoom: prevViewport.camera.zoom + ((goalZoom - prevViewport.camera.zoom) * 0.05)
             }
         }))
+
+        if (0.1 < Math.abs(goalZoom - viewport.camera.zoom)) {
+            requestAnimationFrame(zoomAnimation)
+        } else {
+            setViewport(prevViewport => ({
+                ...prevViewport,
+                camera: {
+                    ...prevViewport.camera,
+                    zoom: goalZoom
+                }
+            }))
+        }
     }
+
+    useEffect(() => {
+
+        zoomAnimationRequestRef.current = requestAnimationFrame(zoomAnimation)
+    })
 
 
     function projectTrackElement(trackElement: TimeTrackElement): RenderingTrackElement {
@@ -189,8 +217,9 @@ export default function ViewerContainer({chartData}: ViewerContainerParms) { // 
                         width: `${chartViewportWidth}px`
                     }}
                     ref={chartSpaceRef}
-                    onWheel={handleWheel}
-                    onMouseDown={() => {mousePushRef.current = true}}
+                    onMouseDown={() => {
+                        mousePushRef.current = true
+                    }}
                 />
             </div>
         </div>
