@@ -1,7 +1,6 @@
-export interface TrackElement {}
+import type {Pixel, Time} from "@/types.ts";
 
-export type Time = number
-export type Pixel = number
+export interface TrackElement {}
 
 export type TimeTrackElement = TrackElement & {
     at: Time

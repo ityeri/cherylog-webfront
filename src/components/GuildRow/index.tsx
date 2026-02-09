@@ -3,21 +3,22 @@ import GuildIcon from "@/components/GuildIcon";
 import {motion} from "framer-motion";
 import * as React from "react";
 import {useState} from "react";
-import type {_Viewport} from "@/_Viewport.ts";
-import type {ChannelData} from "@/chartDataTypes.ts";
+import type {ChannelData, RenderingTrackElement} from "@/chartData/types.ts";
 
 type GuildRowParms = {
     name: string
     guildIcon: string
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
-    viewport: _Viewport
-    channels: Record<string, ChannelData>
+    channels: Record<string, ChannelData<RenderingTrackElement>>
 }
 
-export default function GuildRow({name, guildIcon, opened, onDoubleClick, viewport, channels}: GuildRowParms) {
+export default function GuildRow({name, guildIcon, opened, onDoubleClick, channels}: GuildRowParms) {
     const [channelStates, setChannelStates] = useState(
-        Object.fromEntries(Object.keys(channels).map(c => [c, true]))
+        Object.fromEntries(
+            Object.keys(channels)
+                .map((channelId) => [channelId, true])
+        )
     )
 
     const handleDoubleClick = (channelId: string) => {
@@ -66,7 +67,6 @@ export default function GuildRow({name, guildIcon, opened, onDoubleClick, viewpo
                             enabled={channelData.enabled}
                             opened={channelStates[channelId]}
                             onDoubleClick={() => handleDoubleClick(channelId)}
-                            viewport={viewport}
                             users={channelData.users}
                         />
                 })

@@ -1,22 +1,20 @@
 import UserRow from "@/components/UserRow";
 
 import * as React from "react";
-import type {_Viewport} from "@/_Viewport.ts";
 import EnabledIcon from "@/assets/voice-channel-enabled.svg";
 import DisabledIcon from "@/assets/voice-channel-disabled.svg";
-import type {UserData} from "@/chartDataTypes.ts";
+import type {RenderingTrackElement, UserData} from "@/chartData/types.ts";
 
 type ChannelRowParms = {
     name: string
     enabled: boolean
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
-    viewport: _Viewport
-    users: Record<number, UserData>
+    users: Record<number, UserData<RenderingTrackElement>>
 }
 
 export default function ChannelRow(
-    {name, enabled, opened, onDoubleClick, viewport, users}: ChannelRowParms
+    {name, enabled, opened, onDoubleClick, users}: ChannelRowParms
 ) {
     const childWrapperClass = `
     grid grid-cols-subgrid col-span-2 
@@ -63,7 +61,6 @@ export default function ChannelRow(
                             selfDeaf={userData.selfDeaf}
                             selfMute={userData.selfMute}
 
-                            viewport={viewport}
                             voiceStateData={userData.voiceStateData}
                         />
                     </div>

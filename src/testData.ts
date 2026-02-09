@@ -1,7 +1,7 @@
 import TestImage from "@/assets/test.png";
-import type {ChannelData, ChartData, GuildData, UserData} from "@/chartDataTypes.ts";
+import type {ChannelData, ChartData, GuildData, TimeTrackElement, UserData} from "@/chartData/types.ts";
 
-function createUserData(id: number): UserData {
+function createUserData(id: string): UserData<TimeTrackElement> {
     return {
         id: id,
         name: "밍코",
@@ -23,37 +23,37 @@ function createUserData(id: number): UserData {
     }
 }
 
-function createChannelData(id: number): ChannelData {
+function createChannelData(id: string): ChannelData<TimeTrackElement> {
     return {
         id: id,
         name: "allen.sh",
         enabled: true,
         users: {
-            0: createUserData(0),
-            1: createUserData(1),
-            2: createUserData(2),
-            3: createUserData(3),
+            "0": createUserData("0"),
+            "1": createUserData("1"),
+            "2": createUserData("2"),
+            "3": createUserData("3"),
         }
     }
 }
 
-function createGuildData(id: number): GuildData {
+function createGuildData(id: string): GuildData<TimeTrackElement> {
     return {
         id: id,
         name: "밍코와 친구들",
         icon: TestImage,
         channels: {
-            0: createChannelData(0),
-            1: createChannelData(1),
-            2: createChannelData(2),
-            3: createChannelData(3)
+            "0": createChannelData("0"),
+            "1": createChannelData("1"),
+            "2": createChannelData("2"),
+            "3": createChannelData("3")
         }
     }
 }
 
-export const testChartData: ChartData = {
-    0: createGuildData(0),
-    1: createGuildData(1),
-    2: createGuildData(2),
-    3: createGuildData(3)
+export const testChartData: ChartData<TimeTrackElement> = {
+    "0": createGuildData("0"),
+    "1": createGuildData("1"),
+    "2": createGuildData("2"),
+    "3": createGuildData("3")
 }

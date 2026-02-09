@@ -1,4 +1,4 @@
-import type {ChannelData, ChartData, GuildData, TrackElement, UserData, VoiceStateData} from "@/chartDataTypes.ts";
+import type {ChannelData, ChartData, GuildData, TrackElement, UserData, VoiceStateData} from "@/chartData/types.ts";
 import type {Lens, Traversal} from "@/optics.ts";
 
 export function chartDataTraversal<A extends TrackElement, B extends TrackElement>():
@@ -14,7 +14,7 @@ export function chartDataTraversal<A extends TrackElement, B extends TrackElemen
         ): ChartData<B> {
             return Object.fromEntries(
                 this.getAll(s)
-                    .map(a => f(a))
+                    .map(f)
                     .map((b) => [b.id, b])
             )
         }
@@ -38,7 +38,7 @@ export function guildDataTraversal<A extends TrackElement, B extends TrackElemen
                 icon: s.icon,
                 channels: Object.fromEntries(
                     this.getAll(s)
-                        .map(a => f(a))
+                        .map(f)
                         .map((b) => [b.id, b])
                 )
             }
@@ -63,7 +63,7 @@ export function channelDataTraversal<A extends TrackElement, B extends TrackElem
                 enabled: s.enabled,
                 users: Object.fromEntries(
                     this.getAll(s)
-                        .map(a => f(a))
+                        .map(f)
                         .map(b => [b.id, b])
                 )
             }
@@ -71,7 +71,7 @@ export function channelDataTraversal<A extends TrackElement, B extends TrackElem
     }
 }
 
-// it`s not abstracted enough maybe
+// it`s not abstracted enough maybe; minko's createLens!
 export function userDataLens<A extends TrackElement, B extends TrackElement>():
     Lens<UserData<A>, UserData<B>, VoiceStateData<A>, VoiceStateData<B>>
 {
@@ -90,6 +90,25 @@ export function userDataLens<A extends TrackElement, B extends TrackElement>():
                 selfMute: s.selfMute,
 
                 voiceStateData: b
+            }
+        }
+    }
+}
+
+export function voiceStateDataTraversal<A extends TrackElement, B extends TrackElement>():
+    Traversal<VoiceStateData<A>, VoiceStateData<B>, A, B>
+{
+    return {
+        getAll(s: VoiceStateData<A>): A[] {
+            return [s.deaf, s.mute, s.selfDeaf, s.selfMute].flat()
+        },
+        editAll(s: VoiceStateData<A>, f: (a: A) => B): VoiceStateData<B> {
+            return {
+                disconnection: s.disconnection.map(f),
+                deaf: s.deaf.map(f),
+                mute: s.mute.map(f),
+                selfDeaf: s.selfDeaf.map(f),
+                selfMute: s.selfMute.map(f)
             }
         }
     }

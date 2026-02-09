@@ -1,9 +1,8 @@
-import type {_Viewport} from "@/_Viewport.ts";
 import DeafIcon from "@/assets/voice-state-icon/deaf.svg";
 import MuteIcon from "@/assets/voice-state-icon/mute.svg";
 import SelfDeafIcon from "@/assets/voice-state-icon/self-deaf.svg";
 import SelfMuteIcon from "@/assets/voice-state-icon/self-mute.svg";
-import type {VoiceStateData} from "@/chartDataTypes.ts";
+import type {RenderingTrackElement, VoiceStateData} from "@/chartData/types.ts";
 
 type UserRowParms = {
     name: string
@@ -15,15 +14,14 @@ type UserRowParms = {
     selfDeaf: boolean
     selfMute: boolean
 
-    viewport: _Viewport
-    voiceStateData: VoiceStateData
+    voiceStateData: VoiceStateData<RenderingTrackElement>
 }
 
 export default function UserRow(
     {
         name, profileImage, enabled,
         deaf, mute, selfDeaf, selfMute,
-        viewport, voiceStateData
+        voiceStateData
     }: UserRowParms
 ) {
     return <div
@@ -66,23 +64,23 @@ export default function UserRow(
                 <div className=" size-full flex flex-col gap-1 overflow-clip">
                     <div className="flex-1 relative">
                         {
-                            voiceStateData.selfDeaf.map(value => { // TODO value -> any other name?
+                            voiceStateData.selfDeaf.map(trackElement => {
                                 return <div
                                     className="absolute inset-y-0 bg-text-disabled rounded-full"
                                     style={{
-                                        left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
-                                        width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                        transform: `translateX(${trackElement.leftPx}px)`,
+                                        width: `${trackElement.width}px`
                                     }}
                                 />
                             })
                         }
                         {
-                            voiceStateData.deaf.map(value => {
+                            voiceStateData.deaf.map(trackElement => {
                                 return <div
                                     className="absolute inset-y-0 bg-red-500 rounded-full"
                                     style={{
-                                        left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
-                                        width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                        transform: `translateX(${trackElement.leftPx}px)`,
+                                        width: `${trackElement.width}px`
                                     }}
                                 />
                             })
@@ -90,23 +88,23 @@ export default function UserRow(
                     </div>
                     <div className="flex-1 relative">
                         {
-                            voiceStateData.selfMute.map(value => {
+                            voiceStateData.selfMute.map(trackElement => {
                                 return <div
                                     className="absolute inset-y-0 bg-text-disabled rounded-full"
                                     style={{
-                                        left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
-                                        width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                        transform: `translateX(${trackElement.leftPx}px)`,
+                                        width: `${trackElement.width}px`
                                     }}
                                 />
                             })
                         }
                         {
-                            voiceStateData.mute.map(value => {
+                            voiceStateData.mute.map(trackElement => {
                                 return <div
                                     className="absolute inset-y-0 bg-red-500 rounded-full"
                                     style={{
-                                        left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
-                                        width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                        transform: `translateX(${trackElement.leftPx}px)`,
+                                        width: `${trackElement.width}px`
                                     }}
                                 />
                             })
@@ -116,12 +114,12 @@ export default function UserRow(
 
                 <div className="absolute size-full left-0 top-0 overflow-clip">
                     {
-                        voiceStateData.disconnection.map(value => {
+                        voiceStateData.disconnection.map(trackElement => {
                             return <div
                                 className="absolute inset-y-0 bg-black opacity-50"
                                 style={{
-                                    left: `${value.at * viewport.pxPerSecond * viewport.zoom + viewport.xShiftPx}px`,
-                                    width: `${value.duration * viewport.pxPerSecond * viewport.zoom}%`,
+                                    transform: `translateX(${trackElement.leftPx}px)`,
+                                    width: `${trackElement.width}px`
                                 }}
                             />
                         })
