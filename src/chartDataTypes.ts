@@ -22,7 +22,7 @@ export type VoiceStateData<T extends TrackElement> = {
 }
 
 export type UserData<T extends TrackElement> = {
-    id: number
+    id: string
     name: string
     profileImage: string
     enabled: boolean
@@ -36,17 +36,17 @@ export type UserData<T extends TrackElement> = {
 }
 
 export type ChannelData<T extends TrackElement> = {
-    id: number
+    id: string
     name: string
     enabled: boolean
-    users: Record<number, UserData<T>>
+    users: Record<string, UserData<T>>
 }
 
 export type GuildData<T extends TrackElement> = {
-    id: number
+    id: string
     name: string
     icon: string
-    channels: Record<number, ChannelData<T>>
+    channels: Record<string, ChannelData<T>>
 }
 
-export type ChartData<T extends TrackElement> = Record<number, GuildData<T>>
+export type ChartData<T extends TrackElement> = Record<string, GuildData<T>>

@@ -1,7 +1,7 @@
 import UserRow from "@/components/UserRow";
 
 import * as React from "react";
-import type {Viewport} from "@/Viewport.ts";
+import type {_Viewport} from "@/_Viewport.ts";
 import EnabledIcon from "@/assets/voice-channel-enabled.svg";
 import DisabledIcon from "@/assets/voice-channel-disabled.svg";
 import type {UserData} from "@/chartDataTypes.ts";
@@ -11,7 +11,7 @@ type ChannelRowParms = {
     enabled: boolean
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
-    viewport: Viewport
+    viewport: _Viewport
     users: Record<number, UserData>
 }
 

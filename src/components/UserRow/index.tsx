@@ -1,4 +1,4 @@
-import type {Viewport} from "@/Viewport.ts";
+import type {_Viewport} from "@/_Viewport.ts";
 import DeafIcon from "@/assets/voice-state-icon/deaf.svg";
 import MuteIcon from "@/assets/voice-state-icon/mute.svg";
 import SelfDeafIcon from "@/assets/voice-state-icon/self-deaf.svg";
@@ -15,7 +15,7 @@ type UserRowParms = {
     selfDeaf: boolean
     selfMute: boolean
 
-    viewport: Viewport
+    viewport: _Viewport
     voiceStateData: VoiceStateData
 }
 

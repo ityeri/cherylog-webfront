@@ -3,7 +3,7 @@ import GuildIcon from "@/components/GuildIcon";
 import {motion} from "framer-motion";
 import * as React from "react";
 import {useState} from "react";
-import type {Viewport} from "@/Viewport.ts";
+import type {_Viewport} from "@/_Viewport.ts";
 import type {ChannelData} from "@/chartDataTypes.ts";
 
 type GuildRowParms = {
@@ -11,7 +11,7 @@ type GuildRowParms = {
     guildIcon: string
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
-    viewport: Viewport
+    viewport: _Viewport
     channels: Record<string, ChannelData>
 }
 
