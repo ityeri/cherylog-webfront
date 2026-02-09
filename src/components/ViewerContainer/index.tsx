@@ -2,7 +2,7 @@ import * as React from "react";
 import {useState} from "react";
 import {type ReactZoomPanPinchRef, TransformComponent, TransformWrapper} from "react-zoom-pan-pinch";
 import GuildRow from "@/components/GuildRow";
-import type {ChartData} from "@/types.ts";
+import type {ChartData} from "@/chartDataTypes.ts";
 
 type ViewerContainerParms = {
     chartData: ChartData

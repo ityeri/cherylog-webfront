@@ -3,7 +3,7 @@ import DeafIcon from "@/assets/voice-state-icon/deaf.svg";
 import MuteIcon from "@/assets/voice-state-icon/mute.svg";
 import SelfDeafIcon from "@/assets/voice-state-icon/self-deaf.svg";
 import SelfMuteIcon from "@/assets/voice-state-icon/self-mute.svg";
-import type {VoiceStateData} from "@/types.ts";
+import type {VoiceStateData} from "@/chartDataTypes.ts";
 
 type UserRowParms = {
     name: string

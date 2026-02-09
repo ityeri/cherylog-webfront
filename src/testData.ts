@@ -1,5 +1,5 @@
 import TestImage from "@/assets/test.png";
-import type {ChannelData, ChartData, GuildData, UserData} from "@/types.ts";
+import type {ChannelData, ChartData, GuildData, UserData} from "@/chartDataTypes.ts";
 
 function createUserData(id: number): UserData {
     return {

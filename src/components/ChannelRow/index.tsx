@@ -4,7 +4,7 @@ import * as React from "react";
 import type {Viewport} from "@/Viewport.ts";
 import EnabledIcon from "@/assets/voice-channel-enabled.svg";
 import DisabledIcon from "@/assets/voice-channel-disabled.svg";
-import type {UserData} from "@/types.ts";
+import type {UserData} from "@/chartDataTypes.ts";
 
 type ChannelRowParms = {
     name: string

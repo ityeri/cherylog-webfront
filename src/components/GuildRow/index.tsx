@@ -4,7 +4,7 @@ import {motion} from "framer-motion";
 import * as React from "react";
 import {useState} from "react";
 import type {Viewport} from "@/Viewport.ts";
-import type {ChannelData} from "@/types.ts";
+import type {ChannelData} from "@/chartDataTypes.ts";
 
 type GuildRowParms = {
     name: string
