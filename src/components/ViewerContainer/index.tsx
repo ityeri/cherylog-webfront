@@ -98,40 +98,65 @@ export default function ViewerContainer({chartData}: ViewerContainerParms) { // 
             window.removeEventListener("mouseup", handleUp)
             window.removeEventListener("mousemove", handleMouseMove)
             if (chartSpaceRef.current !== null) {
-                chartSpaceRef.current!.removeEventListener("wheel", handleWheel)
+                chartSpaceRef.current.removeEventListener("wheel", handleWheel)
             }
         }
     })
 
 
-    const zoomAnimationRequestRef = useRef<number>();
-
-    const zoomAnimation = (time: number) => {
-        setViewport(prevViewport => ({
-            ...prevViewport,
-            camera: {
-                ...prevViewport.camera,
-                zoom: prevViewport.camera.zoom + ((goalZoom - prevViewport.camera.zoom) * 0.05)
-            }
-        }))
-
-        if (0.1 < Math.abs(goalZoom - viewport.camera.zoom)) {
-            requestAnimationFrame(zoomAnimation)
-        } else {
-            setViewport(prevViewport => ({
-                ...prevViewport,
-                camera: {
-                    ...prevViewport.camera,
-                    zoom: goalZoom
-                }
-            }))
-        }
-    }
+    const zoomAnimationRequestRef = useRef<number | null>(null);
+    const minDiff = 0.1;
 
     useEffect(() => {
+        console.log("effect")
 
-        zoomAnimationRequestRef.current = requestAnimationFrame(zoomAnimation)
-    })
+        if (zoomAnimationRequestRef.current) {
+            cancelAnimationFrame(zoomAnimationRequestRef.current)
+        }
+
+        const animate = () => {
+            console.log("animate")
+            setViewport(prevViewport => {
+                const diff = goalZoom - prevViewport.camera.zoom
+
+                if (minDiff < Math.abs(diff)) {
+                    const nextZoom = prevViewport.camera.zoom + (diff * 0.1)
+                    return {
+                        ...prevViewport,
+                        camera: { ...prevViewport.camera, zoom: nextZoom }
+                    }
+                }
+                else {
+                    return {
+                        ...prevViewport,
+                        camera: { ...prevViewport.camera, zoom: goalZoom }
+                    }
+                }
+            })
+
+            // TODO
+            // it won't capture each latest viewport of frame.
+            // because of that, if gap between viewport and goalZoom is not big meaningfully, code is works well
+            // sibal
+            const diff = goalZoom - viewport.camera.zoom
+
+            if (minDiff < Math.abs(diff)) {
+                zoomAnimationRequestRef.current = requestAnimationFrame(animate)
+            } else {
+                console.log("stop")
+                zoomAnimationRequestRef.current = null
+            }
+        }
+
+        console.log("first start")
+        zoomAnimationRequestRef.current = requestAnimationFrame(animate)
+
+        return () => {
+            if (zoomAnimationRequestRef.current) {
+                cancelAnimationFrame(zoomAnimationRequestRef.current)
+            }
+        }
+    }, [goalZoom])
 
 
     function projectTrackElement(trackElement: TimeTrackElement): RenderingTrackElement {
