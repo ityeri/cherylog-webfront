@@ -11,7 +11,6 @@ import {
     userDataLens,
     voiceStateDataTraversal
 } from "@/chartData/optics.ts";
-import * as React from "react";
 
 type ViewerContainerParms = {
     chartData: ChartData<TimeTrackElement>
@@ -92,67 +91,81 @@ export default function ViewerContainer({chartData}: ViewerContainerParms) { // 
     useEffect(() => {
         window.addEventListener("mouseup", handleUp)
         window.addEventListener("mousemove", handleMouseMove)
-        chartSpaceRef.current!.addEventListener("wheel", handleWheel, {passive: false})
+
+        // ESLint says, if ref is about element, copy ref.current in useEffect, and use it in cleanup function
+        const chartSpace = chartSpaceRef.current!
+        chartSpace.addEventListener("wheel", handleWheel, {passive: false})
 
         return () => {
             window.removeEventListener("mouseup", handleUp)
             window.removeEventListener("mousemove", handleMouseMove)
-            if (chartSpaceRef.current !== null) {
-                chartSpaceRef.current.removeEventListener("wheel", handleWheel)
-            }
+            chartSpace.removeEventListener("wheel", handleWheel)
         }
     })
 
 
-    const zoomAnimationRequestRef = useRef<number | null>(null);
-    const minDiff = 0.1;
+    const zoomAnimationRequestRef = useRef<number | null>(null)
+    const maxErrorRatio = 0.01
+
+    // this is needed to tracking the latest value of camera zoom value
+    // I don't want to do this
+    const viewportZoomRef = useRef(viewport.camera.zoom)
 
     useEffect(() => {
-        console.log("effect")
+        viewportZoomRef.current = viewport.camera.zoom
+    }, [viewport.camera.zoom])
 
-        if (zoomAnimationRequestRef.current) {
-            cancelAnimationFrame(zoomAnimationRequestRef.current)
-        }
+    const lastTimeRef = useRef<null | number>(null)
 
-        const animate = () => {
-            console.log("animate")
-            setViewport(prevViewport => {
-                const diff = goalZoom - prevViewport.camera.zoom
+    useEffect(() => {
 
-                if (minDiff < Math.abs(diff)) {
-                    const nextZoom = prevViewport.camera.zoom + (diff * 0.1)
+        const animate = (currentTime: number) => {
+            if (lastTimeRef.current === null) lastTimeRef.current = currentTime
+            const dt = currentTime - lastTimeRef.current!
+            lastTimeRef.current = currentTime
+            console.log(dt)
+
+            const diff = goalZoom - viewportZoomRef.current
+
+            if (maxErrorRatio < Math.abs(diff / viewportZoomRef.current)) { // next frame is needed
+                zoomAnimationRequestRef.current = requestAnimationFrame(animate)
+                setViewport(prevViewport => {
+                    // diff value calculated in animate function scope is have a tiny error
+                    // it maybe cursed by 1 frame delay
+                    const currentDiff = goalZoom - prevViewport.camera.zoom
+
+                    let ratio = 0.02 * dt
+                    if (1 < ratio) ratio = 1
+
+                    const nextZoom = prevViewport.camera.zoom + currentDiff * ratio
                     return {
                         ...prevViewport,
                         camera: { ...prevViewport.camera, zoom: nextZoom }
                     }
-                }
-                else {
+                })
+            }
+            else { // when next frame is not needed
+                console.log("heuristic end")
+                zoomAnimationRequestRef.current = null
+                setViewport(prevViewport => {
                     return {
-                        ...prevViewport,
+                    ...prevViewport,
                         camera: { ...prevViewport.camera, zoom: goalZoom }
                     }
-                }
-            })
-
-            // TODO
-            // it won't capture each latest viewport of frame.
-            // because of that, if gap between viewport and goalZoom is not big meaningfully, code is works well
-            // sibal
-            const diff = goalZoom - viewport.camera.zoom
-
-            if (minDiff < Math.abs(diff)) {
-                zoomAnimationRequestRef.current = requestAnimationFrame(animate)
-            } else {
-                console.log("stop")
-                zoomAnimationRequestRef.current = null
+                })
             }
         }
 
-        console.log("first start")
+        if (zoomAnimationRequestRef.current !== null) {
+            cancelAnimationFrame(zoomAnimationRequestRef.current)
+        } else {
+            lastTimeRef.current = null
+        }
+
         zoomAnimationRequestRef.current = requestAnimationFrame(animate)
 
         return () => {
-            if (zoomAnimationRequestRef.current) {
+            if (zoomAnimationRequestRef.current !== null) {
                 cancelAnimationFrame(zoomAnimationRequestRef.current)
             }
         }
@@ -197,6 +210,7 @@ export default function ViewerContainer({chartData}: ViewerContainerParms) { // 
     const handleDoubleClick = (guildId: string) => {
         setGuildStates(statesOld => Object.assign({}, statesOld, {[guildId]: !statesOld[guildId]}))
     }
+
 
     return <div
         className="
