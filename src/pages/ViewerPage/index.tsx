@@ -5,6 +5,7 @@ import {useEffect} from "react";
 
 export default function ViewerPage() {
     // TODO
+    // api code jung-ri
     // data converting and display test data conversion!!!!!!!!!!!!!!!!!!!!!!!!!!!!! it can make using optics?
     // how to live data display?
     // how to yun-dong with outside components?
