@@ -2,7 +2,7 @@ import {type VoiceEvent, type VoiceEventType} from "./types.ts";
 
 export type VoiceEventRaw = {
     "event_type": string,
-    "member_id": number,
+    "user_id": number,
     "guild_id": number,
     "at": number,
 
@@ -24,7 +24,7 @@ export type VoiceEventRaw = {
 export function mapVoiceEvent(raw: VoiceEventRaw): VoiceEvent {
     return {
         eventType: raw["event_type"] as VoiceEventType,
-        memberId: raw["member_id"].toString(),
+        userId: raw["user_id"].toString(),
         guildId: raw["guild_id"].toString(),
         at: raw["at"],
 

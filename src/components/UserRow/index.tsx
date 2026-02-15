@@ -3,10 +3,11 @@ import MuteIcon from "@/assets/voice-state-icon/mute.svg";
 import SelfDeafIcon from "@/assets/voice-state-icon/self-deaf.svg";
 import SelfMuteIcon from "@/assets/voice-state-icon/self-mute.svg";
 import type {RenderingTrackElement, VoiceStateData} from "@/chartData/types.ts";
+import type {UserMeta} from "@/discord/types.ts";
 
 type UserRowParms = {
-    name: string
-    profileImage: string
+    userMeta: UserMeta
+
     enabled: boolean
 
     deaf: boolean
@@ -19,7 +20,8 @@ type UserRowParms = {
 
 export default function UserRow(
     {
-        name, profileImage, enabled,
+        userMeta,
+        enabled,
         deaf, mute, selfDeaf, selfMute,
         voiceStateData
     }: UserRowParms
@@ -45,10 +47,10 @@ export default function UserRow(
         >
             <div className="h-full flex items-center gap-2">
                 <div className="relative flex h-full aspect-square rounded-full overflow-clip">
-                    <img className="size-full" src={profileImage} alt={name}/>
+                    <img className="size-full" src={userMeta.profileImage} alt={userMeta.name}/>
                     <div className={`absolute inset-0 size-full bg-black ${enabled ? "hidden" : "opacity-50"}`}/>
                 </div>
-                <p className={`${enabled ? "text-text-primary" : "text-text-disabled"}`}>{name}</p>
+                <p className={`${enabled ? "text-text-primary" : "text-text-disabled"}`}>{userMeta.name}</p>
             </div>
 
             <div className="flex h-8/10 gap-1">

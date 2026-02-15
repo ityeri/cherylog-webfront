@@ -1,45 +1,43 @@
-import type {ChannelData, ChartData, GuildData, TrackElement, UserData, VoiceStateData} from "@/chartData/types.ts";
+import type {ChannelChartData, ChartData, GuildChartData, TrackElement, UserChartData, VoiceStateData} from "@/chartData/types.ts";
 import type {Lens, Traversal} from "@/optics.ts";
 
 export function chartDataTraversal<A extends TrackElement, B extends TrackElement>():
-    Traversal<ChartData<A>, ChartData<B>, GuildData<A>, GuildData<B>>
+    Traversal<ChartData<A>, ChartData<B>, GuildChartData<A>, GuildChartData<B>>
 {
     return {
-        getAll(s: ChartData<A>): GuildData<A>[] {
+        getAll(s: ChartData<A>): GuildChartData<A>[] {
             return Object.values(s)
         },
         editAll(
             s: ChartData<A>,
-            f: (a: GuildData<A>) => GuildData<B>
+            f: (a: GuildChartData<A>) => GuildChartData<B>
         ): ChartData<B> {
             return Object.fromEntries(
                 this.getAll(s)
                     .map(f)
-                    .map((b) => [b.id, b])
+                    .map((b) => [b.guild.id, b])
             )
         }
     }
 }
 
 export function guildDataTraversal<A extends TrackElement, B extends TrackElement>():
-    Traversal<GuildData<A>, GuildData<B>, ChannelData<A>, ChannelData<B>>
+    Traversal<GuildChartData<A>, GuildChartData<B>, ChannelChartData<A>, ChannelChartData<B>>
 {
     return {
-        getAll(s: GuildData<A>): ChannelData<A>[] {
+        getAll(s: GuildChartData<A>): ChannelChartData<A>[] {
             return Object.values(s.channels)
         },
         editAll(
-            s: GuildData<A>,
-            f: (a: ChannelData<A>) => ChannelData<B>
-        ): GuildData<B> {
+            s: GuildChartData<A>,
+            f: (a: ChannelChartData<A>) => ChannelChartData<B>
+        ): GuildChartData<B> {
             return {
-                id: s.id,
-                name: s.name,
-                icon: s.icon,
+                ...s,
                 channels: Object.fromEntries(
                     this.getAll(s)
                         .map(f)
-                        .map((b) => [b.id, b])
+                        .map((b) => [b.channel.id, b])
                 )
             }
         }
@@ -47,24 +45,22 @@ export function guildDataTraversal<A extends TrackElement, B extends TrackElemen
 }
 
 export function channelDataTraversal<A extends TrackElement, B extends TrackElement>():
-    Traversal<ChannelData<A>, ChannelData<B>, UserData<A>, UserData<B>>
+    Traversal<ChannelChartData<A>, ChannelChartData<B>, UserChartData<A>, UserChartData<B>>
 {
     return {
-        getAll(s: ChannelData<A>): UserData<A>[] {
+        getAll(s: ChannelChartData<A>): UserChartData<A>[] {
             return Object.values(s.users)
         },
         editAll(
-            s: ChannelData<A>,
-            f: (a: UserData<A>) => UserData<B>
-        ): ChannelData<B> {
+            s: ChannelChartData<A>,
+            f: (a: UserChartData<A>) => UserChartData<B>
+        ): ChannelChartData<B> {
             return {
-                id: s.id,
-                name: s.name,
-                enabled: s.enabled,
+                ...s,
                 users: Object.fromEntries(
                     this.getAll(s)
                         .map(f)
-                        .map(b => [b.id, b])
+                        .map(b => [b.user.id, b])
                 )
             }
         }
@@ -73,21 +69,18 @@ export function channelDataTraversal<A extends TrackElement, B extends TrackElem
 
 // it`s not abstracted enough maybe; minko's createLens!
 export function userDataLens<A extends TrackElement, B extends TrackElement>():
-    Lens<UserData<A>, UserData<B>, VoiceStateData<A>, VoiceStateData<B>>
+    Lens<UserChartData<A>, UserChartData<B>, VoiceStateData<A>, VoiceStateData<B>>
 {
     return {
-        get(s: UserData<A>): VoiceStateData<A> { return s.voiceStateData },
-        set(s: UserData<A>, b: VoiceStateData<B>): UserData<B> {
+        get(s: UserChartData<A>): VoiceStateData<A> { return s.voiceStateData },
+        set(s: UserChartData<A>, b: VoiceStateData<B>): UserChartData<B> {
             return {
-                id: s.id,
-                name: s.name,
-                profileImage: s.profileImage,
-                enabled: s.enabled,
-
-                deaf: s.deaf,
-                mute: s.mute,
-                selfDeaf: s.selfDeaf,
-                selfMute: s.selfMute,
+                ...s,
+                user: {
+                    id: s.user.id,
+                    name: s.user.name,
+                    profileImage: s.user.profileImage,
+                },
 
                 voiceStateData: b
             }

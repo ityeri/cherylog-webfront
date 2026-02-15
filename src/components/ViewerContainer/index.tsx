@@ -14,14 +14,15 @@ import {
 
 type ViewerContainerParms = {
     chartData: ChartData<TimeTrackElement>
+    initialCameraPosition: number
 }
 
-export default function ViewerContainer({chartData}: ViewerContainerParms) { // TODO prevent default wheel (not in jsx space), smooth scroll
+export default function ViewerContainer({chartData, initialCameraPosition}: ViewerContainerParms) { // TODO prevent default wheel (not in jsx space), smooth scroll
     const [goalZoom, setGoalZoom] = useState(0.3)
     const [viewport, setViewport] = useState<Viewport>(
         {
             camera: {
-                at: 0.0,
+                at: initialCameraPosition,
                 zoom: 0.3
             },
             center: 0.5,
@@ -179,11 +180,10 @@ export default function ViewerContainer({chartData}: ViewerContainerParms) { // 
         }
     }
 
-    const trackElementTraversal:
-        Traversal<
-            ChartData<TimeTrackElement>, ChartData<RenderingTrackElement>,
-            TimeTrackElement, RenderingTrackElement
-        > = composeTraversal(
+    const trackElementTraversal: Traversal<
+        ChartData<TimeTrackElement>, ChartData<RenderingTrackElement>,
+        TimeTrackElement, RenderingTrackElement
+    > = composeTraversal(
         chartDataTraversal<TimeTrackElement, RenderingTrackElement>(),
         composeTraversal(
             guildDataTraversal(),
@@ -228,8 +228,7 @@ export default function ViewerContainer({chartData}: ViewerContainerParms) { // 
                         const guildData = renderingChartData[guildId]
 
                         return <GuildRow
-                            name={guildData.name}
-                            guildIcon={guildData.icon}
+                            guildMeta={guildData.guild}
                             opened={guildStates[guildId]}
                             onDoubleClick={() => handleDoubleClick(guildId)}
                             channels={guildData.channels}

@@ -1,7 +1,7 @@
 import TestImage from "@/assets/test.png";
-import type {ChannelData, ChartData, GuildData, TimeTrackElement, UserData} from "@/chartData/types.ts";
+import type {ChannelChartData, ChartData, GuildChartData, TimeTrackElement, UserChartData} from "@/chartData/types.ts";
 
-function createUserData(id: string): UserData<TimeTrackElement> {
+function createUserData(id: string): UserChartData<TimeTrackElement> {
     return {
         id: id,
         name: "밍코",
@@ -23,7 +23,7 @@ function createUserData(id: string): UserData<TimeTrackElement> {
     }
 }
 
-function createChannelData(id: string): ChannelData<TimeTrackElement> {
+function createChannelData(id: string): ChannelChartData<TimeTrackElement> {
     return {
         id: id,
         name: "allen.sh",
@@ -37,7 +37,7 @@ function createChannelData(id: string): ChannelData<TimeTrackElement> {
     }
 }
 
-function createGuildData(id: string): GuildData<TimeTrackElement> {
+function createGuildData(id: string): GuildChartData<TimeTrackElement> {
     return {
         id: id,
         name: "밍코와 친구들",

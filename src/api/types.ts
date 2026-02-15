@@ -1,4 +1,4 @@
-export const VOICE_EVENT_TYPES = {
+export const voiceEventTypes = {
     CHANNEL_CHANGE: "CHANNEL_CHANGE",
 
     DEAF: "DEAF",
@@ -14,11 +14,11 @@ export const VOICE_EVENT_TYPES = {
     AFK: "AFK"
 } as const
 
-export type VoiceEventType = typeof VOICE_EVENT_TYPES[keyof typeof VOICE_EVENT_TYPES]
+export type VoiceEventType = typeof voiceEventTypes[keyof typeof voiceEventTypes]
 
 export type VoiceEvent = {
     eventType: VoiceEventType,
-    memberId: string,
+    userId: string,
     guildId: string,
     at: number,
 

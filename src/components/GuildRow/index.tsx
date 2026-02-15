@@ -3,17 +3,17 @@ import GuildIcon from "@/components/GuildIcon";
 import {motion} from "framer-motion";
 import * as React from "react";
 import {useState} from "react";
-import type {ChannelData, RenderingTrackElement} from "@/chartData/types.ts";
+import type {ChannelChartData, RenderingTrackElement} from "@/chartData/types.ts";
+import type {GuildMeta} from "@/discord/types.ts";
 
 type GuildRowParms = {
-    name: string
-    guildIcon: string
+    guildMeta: GuildMeta
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
-    channels: Record<string, ChannelData<RenderingTrackElement>>
+    channels: Record<string, ChannelChartData<RenderingTrackElement>>
 }
 
-export default function GuildRow({name, guildIcon, opened, onDoubleClick, channels}: GuildRowParms) {
+export default function GuildRow({guildMeta, opened, onDoubleClick, channels}: GuildRowParms) {
     const [channelStates, setChannelStates] = useState(
         Object.fromEntries(
             Object.keys(channels)
@@ -37,9 +37,9 @@ export default function GuildRow({name, guildIcon, opened, onDoubleClick, channe
         >
             <div className="flex flex-col gap-y-1">
                 <div className="w-10 m-0.5 aspect-square">
-                    <GuildIcon imagePath={guildIcon}/>
+                    <GuildIcon imagePath={guildMeta.icon}/>
                 </div>
-                <p className="font-semibold">{name}</p>
+                <p className="font-semibold">{guildMeta.name}</p>
             </div>
             <div></div>
         </div>
@@ -63,7 +63,7 @@ export default function GuildRow({name, guildIcon, opened, onDoubleClick, channe
                         const channelData = channels[channelId]
 
                         return <ChannelRow
-                            name={channelData.name}
+                            channelMeta={channelData.channel}
                             enabled={channelData.enabled}
                             opened={channelStates[channelId]}
                             onDoubleClick={() => handleDoubleClick(channelId)}

@@ -3,18 +3,19 @@ import UserRow from "@/components/UserRow";
 import * as React from "react";
 import EnabledIcon from "@/assets/voice-channel-enabled.svg";
 import DisabledIcon from "@/assets/voice-channel-disabled.svg";
-import type {RenderingTrackElement, UserData} from "@/chartData/types.ts";
+import type {RenderingTrackElement, UserChartData} from "@/chartData/types.ts";
+import type {ChannelMeta} from "@/discord/types.ts";
 
 type ChannelRowParms = {
-    name: string
+    channelMeta: ChannelMeta
     enabled: boolean
     opened: boolean
     onDoubleClick: (event: React.MouseEvent) => void
-    users: Record<number, UserData<RenderingTrackElement>>
+    users: Record<number, UserChartData<RenderingTrackElement>>
 }
 
 export default function ChannelRow(
-    {name, enabled, opened, onDoubleClick, users}: ChannelRowParms
+    {channelMeta, enabled, opened, onDoubleClick, users}: ChannelRowParms
 ) {
     const childWrapperClass = `
     grid grid-cols-subgrid col-span-2 
@@ -36,7 +37,7 @@ export default function ChannelRow(
             <div className="overflow-hidden">
                 <div className=" size-full flex items-center gap-2.5">
                     <img src={enabled ? EnabledIcon : DisabledIcon} alt="TODO" className="h-full aspect-square"/>
-                    <p className={enabled ? "text-text-primary" : "text-text-disabled"}>{name}</p>
+                    <p className={enabled ? "text-text-primary" : "text-text-disabled"}>{channelMeta.name}</p>
                 </div>
             </div>
             <div>
@@ -52,8 +53,8 @@ export default function ChannelRow(
                 Object.values(users).map((userData) => {
                     return <div className={childWrapperClass}>
                         <UserRow
-                            name={userData.name}
-                            profileImage={userData.profileImage}
+                            userMeta={userData.user}
+
                             enabled={userData.enabled}
 
                             deaf={userData.deaf}
